@@ -51,8 +51,24 @@ def main():
         wallet_input = st.text_input("Enter your wallet address:")
         search_button = st.button("Search")
     
-    # Initialize search result index
+    # Initialize search result index and search results
     search_index = None
+    name = None
+    reward = None
+    wshards = None
+    
+    # Process search if button is clicked
+    if search_button and wallet_input:
+        search_wallet = process_wallet(wallet_input)
+        logger.info(f"Searching for wallet: {search_wallet}")
+        
+        # Search using the lowercase version of the wallet
+        result = df[df['Wallet_lower'] == search_wallet]
+        if not result.empty:
+            name = result.iloc[0]['Name']
+            reward = result.iloc[0]['Odyssey Drop']
+            wshards = result.iloc[0]['wShards']
+            search_index = result.index[0]  # Store the index for highlighting
     
     # Reward Distribution Graph
     st.markdown("### Reward Distribution")
@@ -183,17 +199,7 @@ def main():
     # Your Estimated Rewards Section
     st.markdown("### Your Estimated Rewards")
     if search_button and wallet_input:
-        search_wallet = process_wallet(wallet_input)
-        logger.info(f"Searching for wallet: {search_wallet}")
-        
-        # Search using the lowercase version of the wallet
-        result = df[df['Wallet_lower'] == search_wallet]
-        if not result.empty:
-            name = result.iloc[0]['Name']
-            reward = result.iloc[0]['Odyssey Drop']
-            wshards = result.iloc[0]['wShards']
-            search_index = result.index[0]  # Store the index for highlighting
-            
+        if name is not None:  # We found a match
             # Display results on separate lines
             st.markdown(f"**Name:** {name}")
             st.markdown(f"**wShards:** {wshards:,.0f}")
@@ -203,6 +209,8 @@ def main():
             st.write("")
             st.write("")
             st.markdown("### Congratulations! 🎉")
+            st.write("")
+            st.write("Note: This is an estimate and may be higher than the actual amount you will receive. wShards were distributed based on WW NFT ownership. Total included in calculation is based on 5200 wallets, 60% proportional shared of 3 Million $WILD.")
         else:
             st.warning("No matching wallet found")
 
