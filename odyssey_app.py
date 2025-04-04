@@ -47,6 +47,7 @@ def main():
     
     # Sidebar
     with st.sidebar:
+        st.title("Sma11's Odyssey Airdrop Estimate")
         st.header("Search Wallet")
         wallet_input = st.text_input("Enter your wallet address:")
         search_button = st.button("Search")
